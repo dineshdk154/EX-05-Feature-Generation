@@ -20,58 +20,188 @@ Save the data to the file
 
 
 # CODE
-#Data.csv import pandas as pd
-import seaborn as sbn
-df=pd.read_csv("/content/data.csv")
-df.info()
-df.isnull().sum() 
-from sklearn.preprocessing import LabelEncoder le = LabelEncoder() 
-df['Ord_2'] = le.fit_transform(df['Ord_2']) sbn.set(style ="darkgrid") sbn.countplot(df['Ord_2'])
-from sklearn.preprocessing import OneHotEncoder 
-enc = OneHotEncoder()
-enc = enc.fit_transform(df[['City']]).toarray() encoded_colm = pd.DataFrame(enc) 
 
-df = pd.concat([df, encoded_colm], axis=1) df = df.drop(['City'], axis=1) 
-df.head(10) df = pd.get_dummies(df, prefix=['Ord_2'], columns=['Ord_2'])
-df.head(10) df = pd.get_dummies(df, prefix=['Ord_1'], columns=['Ord_1'])
-df.head(10)
-#Encoding.csv
+# Encoding.csv
+
+```
 import pandas as pd
-import seaborn as sbn
-data=pd.read_csv("/content/Encoding Data.csv")
-data.info() 
-data.isnull().sum() 
-from sklearn.preprocessing
-import LabelEncoder le = LabelEncoder() data['ord_2'] = le.fit_transform(data['ord_2']) sbn.set(style ="darkgrid") sbn.countplot(data['ord_2']) 
+df=pd.read_csv("data.csv")
+df
+
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from sklearn.preprocessing import OneHotEncoder
-en = OneHotEncoder()
-en = en.fit_transform(data[['nom_0']]).toarray()
-encoded_colm = pd.DataFrame(en) 
-data= pd.concat([data, encoded_colm], axis=1)
 
-data= data.drop(['nom_0'], axis=1) 
-data.head(10) 
-data = pd.get_dummies(df, prefix=['bin_2'], columns=['bin_2']) 
-data.head(10)
-#Titanic.csv
+oe=OrdinalEncoder()
+df1=df.copy()
+
+df1["City"] = oe.fit_transform(df1[["City"]])
+df1["bin_1"] = oe.fit_transform(df1[["bin_1"]])
+df1["Ord_1"] = oe.fit_transform(df1[["Ord_1"]])
+df1["Ord_2"] = oe.fit_transform(df1[["Ord_2"]])
+df1["bin_2"] = oe.fit_transform(df1[["bin_2"]])
+
+df2=df.copy()
+
+#feature scaling
+from sklearn.preprocessing import MinMaxScaler
+sc=MinMaxScaler()
+df2=pd.DataFrame(sc.fit_transform(df1),columns=['id', 'bin_1', 'bin_2', 'City', 'Ord_1','Ord_2','Target'])
+df2
+
+from sklearn.preprocessing import StandardScaler
+sc1=StandardScaler()
+df3=pd.DataFrame(sc1.fit_transform(df1),columns=['id', 'bin_1', 'bin_2', 'City', 'Ord_1','Ord_2','Target'])
+df3
+
+from sklearn.preprocessing import MaxAbsScaler
+sc2=MaxAbsScaler()
+df4=pd.DataFrame(sc2.fit_transform(df1),columns=['id', 'bin_1', 'bin_2', 'City', 'Ord_1','Ord_2','Target'])
+df4
+
+from sklearn.preprocessing import RobustScaler
+sc3=RobustScaler()
+df5=pd.DataFrame(sc3.fit_transform(df1),columns=['id', 'bin_1', 'bin_2', 'City', 'Ord_1','Ord_2','Target'])
+df5
+
+```
+
+# Titanic_dataset.csv
+```
+
 import pandas as pd
-import seaborn as sbn
-dt=pd.read_csv("/content/titanic_dataset.csv")
-dt.info()
-dt.isnull().sum() 
-dt['Age']=dt['Age'] . fillna(dt ['Age'].mean())
-dt ['Cabin']=dt['Cabin'].
-fillna(dt['Cabin']. mode() [0]) dt ['Embarked']=dt['Embarked'] . fillna(df ['Embarked'].mode( )[0]) dt.isnull().sum( ) from sklearn.preprocessing import LabelEncoder lc = LabelEncoder() df['Sex'] = lc.fit_transform(df['Sex']) sbn.set(style ="darkgrid") sbn.countplot(df['Sex']) from sklearn.preprocessing import OneHotEncoder enc= OneHotEncoder() enc= enc.fit_transform(dt[['Name']]).toarray() encoded_colm = pd.DataFrame(enc) dt= pd.concat([dt, encoded_colm], axis=1) dt= dt.drop(['Name'], axis=1) dt.head(10) dt = pd.get_dummies(dt, prefix=['Ticket'] ,columns=['Ticket']) df.head(10) dt = pd.get_dummies(dt, prefix=['Embarked'] ,columns=['Embarked']) df.head(10)
+rf=pd.read_csv("titanic.csv")
+rf
+
+#removing unwanted data
+rf.drop("Name",axis=1,inplace=True)
+rf.drop("Ticket",axis=1,inplace=True)
+rf.drop("Cabin",axis=1,inplace=True)  
+
+rf["Age"]=rf["Age"].fillna(rf["Age"].median())
+rf["Embarked"]=rf["Embarked"].fillna(rf["Embarked"].mode()[0])
+
+rf.isnull().sum()
+
+rf1=rf.copy()
+
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
+embark=['S','C','Q']
+oe=OrdinalEncoder()
+
+e1=OrdinalEncoder(categories=[embark])
+rf1['Embarked'] = e1.fit_transform(rf[['Embarked']])
+rf1['Sex'] = oe.fit_transform(rf[['Sex']])
+rf1
+
+#feature scaling
+from sklearn.preprocessing import MinMaxScaler
+sc=MinMaxScaler()
+rf0=pd.DataFrame(sc.fit_transform(rf1),columns=['PassengerId', 'Survived', 'Pclass', 'Sex','Age','SibSp','Parch','Fare','Embarked'])
+rf0
+
+from sklearn.preprocessing import StandardScaler
+sc1=StandardScaler()
+rf3=pd.DataFrame(sc1.fit_transform(rf1),columns=['Passenger','Survived','Pclass','Sex','Age','SibSp','Parch','Fare','Embarked'])
+rf3
+
+from sklearn.preprocessing import MaxAbsScaler
+sc2=MaxAbsScaler()
+rf4=pd.DataFrame(sc2.fit_transform(rf1),columns=['Passenger','Survived','Pclass','Sex','Age','SibSp','Parch','Fare','Embarked'])
+rf4
+
+from sklearn.preprocessing import RobustScaler
+sc3=RobustScaler()
+rf5=pd.DataFrame(sc3.fit_transform(rf1),columns=['Passenger','Survived','Pclass','Sex','Age','SibSp','Parch','Fare','Embarked'])
+rf5
+
+```
+
 # OUPUT
-# data set.csv
-![1](https://user-images.githubusercontent.com/104413084/232668021-80f6bba1-78d1-4785-882a-7a417e71106d.jpg)
-![IMG-20230418-WA0009](https://user-images.githubusercontent.com/104413084/232668033-a69993c4-567e-4cd3-b955-e5e2e0f7d3d6.jpg)
-![IMG-20230418-WA0012](https://user-images.githubusercontent.com/104413084/232668050-f82f21e6-e13d-47ae-93ef-ea3cedcb4451.jpg)
-![IMG-20230418-WA0014](https://user-images.githubusercontent.com/104413084/232668063-dc6f14a7-976e-4ec9-b6bc-fb1d81358705.jpg)
-![IMG-20230418-WA0017](https://user-images.githubusercontent.com/104413084/232668084-6b243ac2-4677-4be7-b644-ec48b2464bda.jpg)4
-![IMG-20230418-WA0018](https://user-images.githubusercontent.com/104413084/232668106-1bdfc094-3170-44fd-8b5e-13648fc84cc8.jpg)
-![IMG-20230418-WA0021](https://user-images.githubusercontent.com/104413084/232668122-d5916318-8106-44cd-8f6a-e400ed6709e7.jpg)
-![IMG-20230418-WA0020](https://user-images.githubusercontent.com/104413084/232668144-cecbe34b-22f3-4f16-88e0-f64fe3350017.jpg)
-![IMG-20230418-WA0019](https://user-images.githubusercontent.com/104413084/232668163-c496dd0e-e15a-43b1-88a0-e9ec8c6cdac0.jpg)
+
+# Data.csv:
+
+# Initial dataset:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/71.png)
+
+# Encoded dataset:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/72.png)
+
+# Data scaling using MinMaxScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/73.png)
+
+# Data scaling using StandardScalar:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/75.png)
+
+# Data scaling using MaxAbsScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/76.png)
+
+# Data scaling using RobustScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/77.png)
+
+# Encoding.csv:
+
+# Initial dataset:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/78.png)
+
+# Encoded dataset:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/79.png)
+
+# Data scaling using MinMaxScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/80.png)
+
+# Data scaling using StandardScalar:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/81.png)
+
+# Data scaling using MaxAbsScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/82.png)
+
+# Data scaling using RobustScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/83.png)
+
+# Titanic_dataset.csv:
+
+# Initial dataset:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/84.png)
+
+# isnull.sum()
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/85.png)
+
+# Encoded dataset:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/86.png)
+
+# Data scaling using MinMaxScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/87.png)
+
+# Data scaling using StandardScalar:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/88.png)
+
+# Data scaling using MaxAbsScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/89.png)
+
+# Data scaling using RobustScaler:
+
+![](https://github.com/saran7d/EX-05-Feature-Generation/blob/main/90.png)
+
+# RESULT:
+
+Feature Generation process and Feature Scaling process is applied to the given data frames sucessfully.
 
 
